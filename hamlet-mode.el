@@ -10,7 +10,7 @@
 (defconst hamlet-font-lock-highlighting
   `(
     ;; tag names
-    (,(concat "<\\(" hamlet-name-regexp "\\)") 1 font-lock-function-name-face)
+    (,(concat "</?\\(" hamlet-name-regexp "\\)") 1 font-lock-function-name-face)
     ;; attributes; the three groups, in order, are attribute name,
     ;; attribute string value, and .class or #id
     (,(concat "\\(?:^\\|[ \t]\\)\\(?:\\("
@@ -21,7 +21,9 @@
      (3 font-lock-variable-name-face nil t)
      )
     ;; variable interpolation
-    (,(concat "\\([@^#]{[^}]+}\\)") 1 font-lock-preprocessor-face t)
+    ("\\([@^#]{[^}]+}\\)" 1 font-lock-preprocessor-face t)
+    ;; control flow
+    ("^[ \t]*\\($\\w+\\)" 1 font-lock-keyword-face)
     )
 )
 
