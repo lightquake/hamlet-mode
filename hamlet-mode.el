@@ -1,5 +1,4 @@
 ; An emacs mode for editing files written in Hamlet, Yesod's HTML-like templating language.
-
 (defvar hamlet-mode-hook nil)
 
 ; autoload on .hamlet files
@@ -37,3 +36,5 @@
 (define-derived-mode hamlet-mode fundamental-mode "Hamlet"
   "Major mode for editing Hamlet files."
   (setq font-lock-defaults '(hamlet-font-lock-highlighting)))
+
+(provide 'haskell-mode)
