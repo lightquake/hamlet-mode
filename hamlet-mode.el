@@ -20,7 +20,7 @@
      (2 font-lock-string-face nil t)
      (3 font-lock-variable-name-face nil t)
      )
-    (,(concat "\\([@^#]{[^}]+}\\)") 1 font-lock-preprocessor-face)
+    (,(concat "\\([@^#]{[^}]+}\\)") 1 font-lock-preprocessor-face t)
     )
     ;; variable interpolation
 
