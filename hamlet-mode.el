@@ -6,13 +6,22 @@
 (add-to-list 'auto-mode-alist '("\\.hamlet\\'" . hamlet-mode))
 
 
-(defconst hamlet-font-lock-highlighting
-  '(
-    ("<\\(\\w+\\)" 1 font-lock-function-name-face)
-    ("[.#]\\(\\(\\w\\|-\\)+\\)" . font-lock-variable-name-face)
-    )
-  )
+(defconst hamlet-name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
 
+(defconst hamlet-font-lock-highlighting
+  ;; match attribute names
+  `((,(concat "\\(?:^\\|[ \t]\\)\\(?:\\(" hamlet-name-regexp "\\)=\\|\\([.#]" hamlet-name-regexp "\\)\\)")
+    (1 font-lock-variable-name-face nil t)
+    (2 font-lock-variable-name-face nil t)
+    ))
+)
+
+(defvar hamlet-mode-syntax-table
+  (let ((st (make-syntax-table)))
+    (modify-syntax-entry ?< "(>" st)
+    (modify-syntax-entry ?> ")<" st)
+    st)
+)
 
 (define-derived-mode hamlet-mode fundamental-mode "Hamlet"
   "Major mode for editing Hamlet files."
