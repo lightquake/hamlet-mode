@@ -1,0 +1,5 @@
+To use:
+
+Put somewhere on your load-path, then (require 'hamlet-mode). This
+is the first bit of elisp I've written, let alone major modes, so
+suggestions are welcome!
