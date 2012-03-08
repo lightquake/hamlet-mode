@@ -9,11 +9,21 @@
 (defconst hamlet-name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
 
 (defconst hamlet-font-lock-highlighting
-  ;; match attribute names
-  `((,(concat "\\(?:^\\|[ \t]\\)\\(?:\\(" hamlet-name-regexp "\\)=\\|\\([.#]" hamlet-name-regexp "\\)\\)")
-    (1 font-lock-variable-name-face nil t)
-    (2 font-lock-variable-name-face nil t)
-    ))
+  
+  
+  `(
+    ;; tag names
+    (,(concat "<\\(" hamlet-name-regexp "\\)") 1 font-lock-function-name-face)
+    ;; attributes
+    (,(concat "\\(?:^\\|[ \t]\\)\\(?:\\(" hamlet-name-regexp "\\)=\\(\\sw+\\)\\|\\([.#]" hamlet-name-regexp "\\)\\)")
+     (1 font-lock-variable-name-face nil t)
+     (2 font-lock-string-face nil t)
+     (3 font-lock-variable-name-face nil t)
+     )
+    (,(concat "\\([@^#]{[^}]+}\\)") 1 font-lock-preprocessor-face)
+    )
+    ;; variable interpolation
+
 )
 
 (defvar hamlet-mode-syntax-table
