@@ -37,4 +37,4 @@
   "Major mode for editing Hamlet files."
   (setq font-lock-defaults '(hamlet-font-lock-highlighting)))
 
-(provide 'haskell-mode)
+(provide 'hamlet-mode)
