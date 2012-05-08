@@ -2,8 +2,8 @@
 (defvar hamlet-mode-hook nil)
 
 ; tab stops from column 2 to 80. more than that, and you're doing it wrong.
-(add-hook 'hamlet-mode-hook 'lambda ()
-          (setq tab-stop-list (number-sequence 2 80 2)))
+(add-hook 'hamlet-mode-hook '(lambda ()
+          (setq tab-stop-list (number-sequence 2 80 2))))
 
 
 ; autoload on .hamlet and .lucius files
