@@ -1,8 +1,9 @@
 ; An emacs mode for editing files written in Hamlet, Yesod's HTML-like templating language.
 (defvar hamlet-mode-hook nil)
 
-; autoload on .hamlet files
+; autoload on .hamlet and .lucius files
 (add-to-list 'auto-mode-alist '("\\.hamlet\\'" . hamlet-mode))
+(add-to-list 'auto-mode-alist '("\\.lucius\\'" . css-mode))
 
 (defconst hamlet-name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
 
