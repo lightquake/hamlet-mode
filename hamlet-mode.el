@@ -36,11 +36,32 @@
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?< "(>" st)
     (modify-syntax-entry ?> ")<" st)
+    (modify-syntax-entry ?\\ "w" st)
     st)
 )
 
+(defun hamlet-mode-auto-fill-function ()
+  (when (> (current-column) fill-column)
+    ;; Split at 2 chars before fill-column. This is so that we can insert a
+    ;; space and a hash
+    (while (> (current-column) (- fill-column 2))
+      (skip-syntax-backward "-")
+      (skip-syntax-backward "^-"))
+    (let ((auto-fill-function nil)
+          (indent (current-indentation)))
+      (insert "#")
+      (newline)
+      (indent-to indent)
+      (insert "\\")
+      (end-of-line))))
+
 (define-derived-mode hamlet-mode fundamental-mode "Hamlet"
   "Major mode for editing Hamlet files."
-  (setq font-lock-defaults '(hamlet-font-lock-highlighting)))
+  (kill-local-variable 'normal-auto-fill-function)
+  (kill-local-variable 'font-lock-defaults)
+  (set (make-local-variable 'font-lock-defaults)
+       '(hamlet-font-lock-highlighting))
+  (set (make-local-variable 'normal-auto-fill-function)
+       'hamlet-mode-auto-fill-function))
 
 (provide 'hamlet-mode)
