@@ -80,7 +80,7 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
     (while (and (> (point) 0)
                 (looking-at "[ \t]*$"))
       (forward-line -1))
-    (loop for n from 0 to (+ hamlet/basic-offset (current-indentation))
+    (cl-loop for n from 0 to (+ hamlet/basic-offset (current-indentation))
           by hamlet/basic-offset collect n)))
 
 (defconst hamlet/name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
