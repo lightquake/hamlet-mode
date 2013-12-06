@@ -23,9 +23,16 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ;; SOFTWARE.
 
+(require 'cl)
+
 (defgroup hamlet nil
   "Hamlet editing mode."
   :group 'languages)
+
+(defcustom hamlet/basic-offset 2
+  "The basic indentation level for `hamlet/indent-line'."
+  :type 'integer
+  :group 'hamlet)
 
 (defcustom hamlet-mode-hook nil
   "Hook run by hamlet-mode."
@@ -35,9 +42,38 @@
 ;; Associate ourselves with hamlet files.
 (add-to-list 'auto-mode-alist '("\\.hamlet\\'" . hamlet-mode))
 
-; tab stops from column 2 to 80. more than that, and you're doing it wrong.
-(add-hook 'hamlet-mode-hook '(lambda ()
-          (setq tab-stop-list (number-sequence 2 80 2))))
+(defun hamlet/indent-line ()
+  "Indent the current line according to
+`hamlet/calculate-next-indentation'."
+  (save-excursion
+    (indent-line-to (hamlet/calculate-next-indentation))))
+
+;;; Indentation-related functions.
+(defun hamlet/calculate-next-indentation ()
+  "Calculate the next indentation level for the given line. The
+next indentation level is the next largest value
+in (hamlet/valid-indentations), or 0 if the line is maximally
+indented."
+  (let* ((indentation (current-indentation))
+         (next-indentation (find-if (lambda (x) (> x indentation))
+                                    (hamlet/valid-indentations))))
+    (if (numberp next-indentation) next-indentation 0)))
+
+(defun hamlet/valid-indentations ()
+  "Calculate valid indentations for the current line. Valid
+indentations are the next multiple of `hamlet/basic-offset' after
+the indentation of the previous nonblank line and all smaller
+multiples. i.e., if `hamlet/basic-offset' is 2 and the previous
+line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
+8, 10."
+  (save-excursion
+    ; Move point back to the previous non-blank line.
+    (beginning-of-line 0)
+    (while (and (> (point) 0)
+                (looking-at "[ \t]*$"))
+      (forward-line -1))
+    (loop for n from 0 to (+ hamlet/basic-offset (current-indentation))
+          by hamlet/basic-offset collect n)))
 
 (defconst hamlet-name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
 
@@ -91,6 +127,8 @@
   (set (make-local-variable 'font-lock-defaults)
        '(hamlet-font-lock-highlighting))
   (set (make-local-variable 'normal-auto-fill-function)
-       'hamlet-mode-auto-fill-function))
+       'hamlet-mode-auto-fill-function)
+  (set (make-local-variable 'indent-line-function)
+       'hamlet/indent-line))
 
 (provide 'hamlet-mode)
