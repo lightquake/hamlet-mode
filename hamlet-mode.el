@@ -3,7 +3,7 @@
 ;; Author: Kata <lightquake@amateurtopologist.com
 ;; Keywords: wp, languages, comm
 ;; URL: https://github.com/lightquake/hamlet-mode
-;; Version: DEV
+;; Version: 0.1
 
 ;; Copyright (c) 2012 Kata
 
@@ -32,8 +32,6 @@
 ;; Hamlet, which looks like HTML except using indentation to delimit blocks and
 ;; with some special control-flow syntax, as well as shorthand for declaring
 ;; element IDs and classes.
-
-(require 'cl)
 
 (defgroup hamlet nil
   "Hamlet editing mode."
@@ -123,3 +121,5 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
        'hamlet/indent-line))
 
 (provide 'hamlet-mode)
+
+;;; hamlet-mode.el ends here
