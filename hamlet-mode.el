@@ -92,7 +92,7 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
 
     ;; Attributes can be either name=val, #id, or .class.
     (,(concat "\\(?:^\\|[ \t]\\)\\(?:\\("
-              hamlet/name-regexp "\\)=\\(\\sw*\\)\\|\\([.#]"
+              hamlet/name-regexp "\\)=\\([^@^ \r\n]*\\)\\|\\([.#]"
               hamlet/name-regexp "\\)\\)")
      (1 font-lock-variable-name-face nil t) ; Attribute names
      (2 font-lock-string-face nil t) ; Attribute values
