@@ -2,6 +2,8 @@
 
 ;; Author: Kata <lightquake@amateurtopologist.com
 ;; Keywords: wp, languages, comm
+;; URL: https://github.com/lightquake/hamlet-mode
+;; Version: DEV
 
 ;; Copyright (c) 2012 Kata
 
@@ -22,6 +24,14 @@
 ;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ;; SOFTWARE.
+
+;; Commentary:
+
+;; Hamlet is a type-safe templating system for Haskell, available at
+;; http://hackage.haskell.org/package/hamlet . This is a major mode for editing
+;; Hamlet, which looks like HTML except using indentation to delimit blocks and
+;; with some special control-flow syntax, as well as shorthand for declaring
+;; element IDs and classes.
 
 (require 'cl)
 
@@ -75,27 +85,25 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
     (loop for n from 0 to (+ hamlet/basic-offset (current-indentation))
           by hamlet/basic-offset collect n)))
 
-(defconst hamlet-name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
+(defconst hamlet/name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
 
-(defconst hamlet-font-lock-highlighting
+(defconst hamlet/font-lock-keywords
   `(
-    ;; tag names
-    (,(concat "</?\\(" hamlet-name-regexp "\\)") 1 font-lock-function-name-face)
-    ;; attributes; the three groups, in order, are attribute name,
-    ;; attribute string value, and .class or #id
+    ;; Tag names.
+    (,(concat "</?\\(" hamlet/name-regexp "\\)") . font-lock-function-name-face)
+
+    ;; Attributes can be either name=val, #id, or .class.
     (,(concat "\\(?:^\\|[ \t]\\)\\(?:\\("
-              hamlet-name-regexp "\\)=\\(\\sw*\\)\\|\\([.#]"
-              hamlet-name-regexp "\\)\\)")
-     (1 font-lock-variable-name-face nil t)
-     (2 font-lock-string-face nil t)
-     (3 font-lock-variable-name-face nil t)
-     )
-    ;; variable interpolation
-    ("\\([@^#]{[^}]+}\\)" 1 font-lock-preprocessor-face t)
-    ;; control flow
-    ("^[ \t]*\\($\\w+\\)" 1 font-lock-keyword-face)
-    )
-)
+              hamlet/name-regexp "\\)=\\(\\sw*\\)\\|\\([.#]"
+              hamlet/name-regexp "\\)\\)")
+     (1 font-lock-variable-name-face nil t) ; Attribute names
+     (2 font-lock-string-face nil t) ; Attribute values
+     (3 font-lock-variable-name-face nil t)) ; #id and .class
+
+    ;; Variable interpolation, like @{FooR} or ^{bar} or #{2 + 2}.
+    ("\\([@^#]{[^}]+}\\)" . font-lock-preprocessor-face)
+    ;; Control flow statements start with a $.
+    ("^[ \t]*\\($\\w+\\)" . font-lock-keyword-face)))
 
 (defvar hamlet-mode-syntax-table
   (let ((st (make-syntax-table)))
@@ -103,31 +111,14 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
     (modify-syntax-entry ?> ")<" st)
     (modify-syntax-entry ?\\ "w" st)
     st)
-)
-
-(defun hamlet-mode-auto-fill-function ()
-  (when (> (current-column) fill-column)
-    ;; Split at 2 chars before fill-column. This is so that we can insert a
-    ;; space and a hash
-    (while (> (current-column) (- fill-column 2))
-      (skip-syntax-backward "-")
-      (skip-syntax-backward "^-"))
-    (let ((auto-fill-function nil)
-          (indent (current-indentation)))
-      (insert "#")
-      (newline)
-      (indent-to indent)
-      (insert "\\")
-      (end-of-line))))
+  "The hamlet mode syntax table.")
 
 (define-derived-mode hamlet-mode fundamental-mode "Hamlet"
   "Major mode for editing Hamlet files."
   (kill-local-variable 'normal-auto-fill-function)
   (kill-local-variable 'font-lock-defaults)
   (set (make-local-variable 'font-lock-defaults)
-       '(hamlet-font-lock-highlighting))
-  (set (make-local-variable 'normal-auto-fill-function)
-       'hamlet-mode-auto-fill-function)
+       '(hamlet/font-lock-keywords))
   (set (make-local-variable 'indent-line-function)
        'hamlet/indent-line))
 
