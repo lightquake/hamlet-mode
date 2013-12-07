@@ -6,7 +6,10 @@ templating engine. Currently it only provides syntax highlighting.
 
 # Installation
 
-Simply put `hamlet-mode.el` wherever you want, load it, and `(require
+If you have Emacs > 23, you can conveniently install `hamlet-mode` via the package
+in [MELPA](http://melpa.milkbox.net/).
+
+To install manually, simply put `hamlet-mode.el` wherever you want, load it, and `(require
 'hamlet-mode)`.
 
 If you want to highlight quasiquoted Hamlet, install `mmm-mode` and do something like this:
