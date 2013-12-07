@@ -73,7 +73,12 @@ displays the closed line as a message."
       (if (eq (current-indentation) new-indentation)
           (let ((line (s-trim (thing-at-point 'line))))
             (if (s-prefix? "<" line)
-                (message "Closing %s" line)))))))
+                (message "Closing %s" line))))))
+
+  ;; If the line is only whitespace, move to the end of it so the user can see
+  ;; where the indentation is.
+  (if (string-match-p "^\\s-*$" (s-trim-right (thing-at-point 'line)))
+      (end-of-line)))
 
 (defun hamlet/previous-line-indentation ()
   "Get the indentation of the previous nonblank line, or 0 if
