@@ -4,7 +4,7 @@
 ;; Keywords: wp, languages, comm
 ;; URL: https://github.com/lightquake/hamlet-mode
 ;; Version: 0.1
-;; Package-Requires: ((cl-lib "0.3") (s "1.7.0"))
+;; Package-Requires: ((cl-lib "0.3") (dash "2.3.0") (s "1.7.0"))
 
 ;; Copyright (c) 2013 Kata
 
@@ -38,6 +38,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'dash)
 (require 's)
 
 (defgroup hamlet nil
@@ -64,8 +65,9 @@ displays the closed line as a message."
 
       ;; Find the first line that's equally indented.
       (forward-line -1)
-      (while (or (> (current-indentation) new-indentation)
-                 (looking-at "^$"))
+      (while (and (> (point) 1)
+                  (or (> (current-indentation) new-indentation)
+                      (looking-at "^$")))
         (forward-line -1))
       ;; If we found the start of the block we just ended, show it.
       (if (eq (current-indentation) new-indentation)
@@ -78,28 +80,36 @@ displays the closed line as a message."
   (if (string-match-p "^\\s-*$" (s-trim-right (thing-at-point 'line)))
       (end-of-line)))
 
-(defun hamlet//previous-line-indentation ()
-  "Get the indentation of the previous nonblank line, or 0 if
-there is no such line."
+(defun hamlet//previous-nonblank-line ()
+  "Get the previous line from point; the return value is a cons
+cell whose car is the line and whose cdr is its indentation, or
+nil if there is no nonblank line."
   (save-excursion
-    (beginning-of-line 0)
-    (while (and (> (point) 0)
-                (looking-at "^[ \t]*$"))
-      (forward-line -1))
-    (current-indentation)))
+    (beginning-of-line)
+    ; There's no previous nonblank line before the first line.
+    (if (eq (point) 1) nil
+      (beginning-of-line 0)
+      (while (and (> (point) 1)
+                  (looking-at "^[ \t]*$"))
+        (forward-line -1))
+      (if (looking-at "^[ \t]*$") nil
+        (cons (thing-at-point 'line) (current-indentation))))))
 
 (defun hamlet/calculate-next-indentation ()
   "Calculate the next indentation level for the given line. The
 next indentation level is the next smallest value
 in (hamlet//valid-indentations), or one indent deeper than the
-previous nonblank line if the line is not currently
-indented. This is intentionally marked public so you can override
-it if you want."
+previous nonblank line if the line is not currently indented. If
+there is no previous nonblank line, the next indentation level is
+0. This is intentionally marked public so you can override it if
+you want."
   (let* ((indentation (current-indentation))
          (next-indentation (cl-find-if (lambda (x) (< x indentation))
                                        (hamlet//valid-indentations))))
     (if (numberp next-indentation) next-indentation
-      (+ (hamlet//previous-line-indentation) hamlet/basic-offset))))
+      (-if-let (prev-line (hamlet//previous-nonblank-line))
+          (+ (cdr prev-line) hamlet/basic-offset)
+        0))))
 
 (defun hamlet//valid-indentations ()
   "Calculate valid indentations for the current line, in
@@ -107,13 +117,13 @@ decreasing order. Valid indentations are the next multiple of
 `hamlet/basic-offset' after the indentation of the previous
 nonblank line and all smaller multiples. i.e., if
 `hamlet/basic-offset' is 2 and the previous line is indented 9
-spaces, the valid indentations are 10, 8, 6, 4, 2, 0."
-  (save-excursion
-    ; Move point back to the previous non-blank line.
-    (reverse (cl-loop for n
-                      from 0 to (+ hamlet/basic-offset
-                                   (hamlet//previous-line-indentation))
-                      by hamlet/basic-offset collect n))))
+spaces, the valid indentations are 10, 8, 6, 4, 2, 0. If there is
+no previous nonblank line, the only valid indentation is 0."
+  (-if-let (previous-line (hamlet//previous-nonblank-line))
+      (reverse (cl-loop for n
+                        from 0 to (+ hamlet/basic-offset (cdr previous-line))
+                        by hamlet/basic-offset collect n))
+    '(0)))
 
 (defconst hamlet//name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
 
