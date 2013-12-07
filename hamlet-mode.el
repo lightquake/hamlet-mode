@@ -75,23 +75,26 @@ displays the closed line as a message."
             (if (s-prefix? "<" line)
                 (message "Closing %s" line)))))))
 
+(defun hamlet/previous-line-indentation ()
+  "Get the indentation of the previous nonblank line, or 0 if
+there is no such line."
+  (save-excursion
+    (beginning-of-line 0)
+    (while (and (> (point) 0)
+                (looking-at "^[ \t]*$"))
+      (forward-line -1))
+    (current-indentation)))
+
 (defun hamlet/calculate-next-indentation ()
   "Calculate the next indentation level for the given line. The
 next indentation level is the next largest value
 in (hamlet/valid-indentations), or 0 if the line is maximally
 indented."
   (let* ((indentation (current-indentation))
-         (prev-line-indentation (save-excursion
-                                  ; Move point to previous non-blank line
-                                  (beginning-of-line 0)
-                                  (while (and (> (point) 0)
-                                              (looking-at "^[ \t]*$"))
-                                    (forward-line -1))
-                                  (current-indentation)))
          (next-indentation (cl-find-if (lambda (x) (< x indentation))
                                        (hamlet/valid-indentations))))
     (if (numberp next-indentation) next-indentation
-      (+ prev-line-indentation hamlet/basic-offset))))
+      (+ (hamlet/previous-line-indentation) hamlet/basic-offset))))
 
 (defun hamlet/valid-indentations ()
   "Calculate valid indentations for the current line, in
@@ -102,12 +105,9 @@ nonblank line and all smaller multiples. i.e., if
 spaces, the valid indentations are 10, 8, 6, 4, 2, 0."
   (save-excursion
     ; Move point back to the previous non-blank line.
-    (beginning-of-line 0)
-    (while (and (> (point) 0)
-                (looking-at "^[ \t]*$"))
-      (forward-line -1))
     (reverse (cl-loop for n
-                      from 0 to (+ hamlet/basic-offset (current-indentation))
+                      from 0 to (+ hamlet/basic-offset
+                                   (hamlet/previous-line-indentation))
                       by hamlet/basic-offset collect n))))
 
 (defconst hamlet/name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
