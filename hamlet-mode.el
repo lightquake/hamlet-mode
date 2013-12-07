@@ -90,10 +90,11 @@ there is no such line."
 
 (defun hamlet/calculate-next-indentation ()
   "Calculate the next indentation level for the given line. The
-next indentation level is the next largest value
-in (hamlet//valid-indentations), or 0 if the line is maximally
-indented. This is not marked public so you can override it if you
-want."
+next indentation level is the next smallest value
+in (hamlet//valid-indentations), or one indent deeper than the
+previous nonblank line if the line is not currently
+indented. This is intentionally marked public so you can override
+it if you want."
   (let* ((indentation (current-indentation))
          (next-indentation (cl-find-if (lambda (x) (< x indentation))
                                        (hamlet//valid-indentations))))
