@@ -72,7 +72,7 @@ displays the closed line as a message."
       ;; If we found the start of the block we just ended, show it.
       (if (eq (current-indentation) new-indentation)
           (let ((line (s-trim (thing-at-point 'line))))
-            (if (s-prefix? "<" line)
+            (if (or (s-prefix? "$" line) (s-prefix? "<" line))
                 (message "Closing %s" line))))))
 
   ;; If the line is only whitespace, move to the end of it so the user can see
