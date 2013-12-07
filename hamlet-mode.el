@@ -32,6 +32,8 @@
 ;; Haskell compile-time HTML templating engine. Currently it only provides
 ;; syntax highlighting.
 
+;;; Code:
+
 (require 'cl-lib)
 (require 's)
 
