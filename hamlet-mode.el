@@ -4,7 +4,7 @@
 ;; Keywords: wp, languages, comm
 ;; URL: https://github.com/lightquake/hamlet-mode
 ;; Version: 0.1
-;;
+;; Package-Requires ((s "1.7.0"))
 
 ;; Copyright (c) 2013 Kata
 
@@ -33,6 +33,7 @@
 ;; syntax highlighting.
 
 (require 'cl-lib)
+(require 's)
 
 (defgroup hamlet nil
   "Hamlet editing mode."
@@ -51,13 +52,27 @@
 ;; Associate ourselves with hamlet files.
 (add-to-list 'auto-mode-alist '("\\.hamlet\\'" . hamlet-mode))
 
+
+;; Indentation-related functions.
 (defun hamlet/indent-line ()
   "Indent the current line according to
-`hamlet/calculate-next-indentation'."
+`hamlet/calculate-next-indentation'. If this closes a tag,
+displays the closed line as a message."
   (save-excursion
-    (indent-line-to (hamlet/calculate-next-indentation))))
+    (let ((new-indentation (hamlet/calculate-next-indentation)))
+      (indent-line-to new-indentation)
 
-;;; Indentation-related functions.
+      ;; Find the first line that's equally indented.
+      (forward-line -1)
+      (while (or (> (current-indentation) new-indentation)
+                 (looking-at "^$"))
+        (forward-line -1))
+      ;; If we found the start of the block we just ended, show it.
+      (if (eq (current-indentation) new-indentation)
+          (let ((line (s-trim (thing-at-point 'line))))
+            (if (s-prefix? "<" line)
+                (message "Closing %s" line)))))))
+
 (defun hamlet/calculate-next-indentation ()
   "Calculate the next indentation level for the given line. The
 next indentation level is the next largest value
