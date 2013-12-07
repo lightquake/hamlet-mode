@@ -48,9 +48,6 @@
   :type 'hook
   :group 'hamlet)
 
-;; Associate ourselves with hamlet files.
-(add-to-list 'auto-mode-alist '("\\.hamlet\\'" . hamlet-mode))
-
 (defun hamlet/indent-line ()
   "Indent the current line according to
 `hamlet/calculate-next-indentation'."
@@ -114,6 +111,7 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
     st)
   "The hamlet mode syntax table.")
 
+;;;###autoload
 (define-derived-mode hamlet-mode fundamental-mode "Hamlet"
   "Major mode for editing Hamlet files."
   (kill-local-variable 'normal-auto-fill-function)
@@ -122,6 +120,12 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
        '(hamlet/font-lock-keywords))
   (set (make-local-variable 'indent-line-function)
        'hamlet/indent-line))
+
+
+;; Associate ourselves with hamlet files.
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.hamlet\\'" . hamlet-mode))
+
 
 (provide 'hamlet-mode)
 
