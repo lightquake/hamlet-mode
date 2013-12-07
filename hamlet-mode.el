@@ -91,7 +91,7 @@ line is indented 9 spaces, the valid indentations are 0, 2, 4, 6,
     ;; Doctype declaration.
     ("^!!!$" . font-lock-keyword-face)
     ;; Tag names.
-    (,(concat "</?\\(" hamlet/name-regexp "\\)") . font-lock-function-name-face)
+    (,(concat "</?\\(" hamlet/name-regexp "\\)") 1 font-lock-function-name-face)
 
     ;; Attributes can be either name=val, #id, or .class.
     (,(concat "\\(?:^\\|[ \t]\\)\\(?:\\("
