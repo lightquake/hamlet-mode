@@ -140,8 +140,12 @@ spaces, the valid indentations are 10, 8, 6, 4, 2, 0."
     st)
   "The hamlet mode syntax table.")
 
+
+(defalias 'hamlet/parent-mode
+  (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
+
 ;;;###autoload
-(define-derived-mode hamlet-mode fundamental-mode "Hamlet"
+(define-derived-mode hamlet-mode hamlet/parent-mode "Hamlet"
   "Major mode for editing Hamlet files."
   (kill-local-variable 'normal-auto-fill-function)
   (kill-local-variable 'font-lock-defaults)
