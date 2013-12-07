@@ -4,7 +4,7 @@
 ;; Keywords: wp, languages, comm
 ;; URL: https://github.com/lightquake/hamlet-mode
 ;; Version: 0.1
-;;
+;; Package-Requires: ((cl-lib "0.3"))
 
 ;; Copyright (c) 2013 Kata
 
