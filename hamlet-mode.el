@@ -4,6 +4,7 @@
 ;; Keywords: wp, languages, comm
 ;; URL: https://github.com/lightquake/hamlet-mode
 ;; Version: 0.1
+;;
 
 ;; Copyright (c) 2012 Kata
 
@@ -32,6 +33,8 @@
 ;; Hamlet, which looks like HTML except using indentation to delimit blocks and
 ;; with some special control-flow syntax, as well as shorthand for declaring
 ;; element IDs and classes.
+
+(require 'cl-lib)
 
 (defgroup hamlet nil
   "Hamlet editing mode."
@@ -63,8 +66,8 @@ next indentation level is the next largest value
 in (hamlet/valid-indentations), or 0 if the line is maximally
 indented."
   (let* ((indentation (current-indentation))
-         (next-indentation (find-if (lambda (x) (> x indentation))
-                                    (hamlet/valid-indentations))))
+         (next-indentation (cl-find-if (lambda (x) (> x indentation))
+                                       (hamlet/valid-indentations))))
     (if (numberp next-indentation) next-indentation 0)))
 
 (defun hamlet/valid-indentations ()
