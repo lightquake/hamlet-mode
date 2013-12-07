@@ -6,7 +6,7 @@
 ;; Version: 0.1
 ;;
 
-;; Copyright (c) 2012 Kata
+;; Copyright (c) 2013 Kata
 
 ;; Permission is hereby granted, free of charge, to any person obtaining a copy
 ;; of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,11 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ;; SOFTWARE.
 
-;; Commentary:
+;;; Commentary:
 
-;; Hamlet is a type-safe templating system for Haskell, available at
-;; http://hackage.haskell.org/package/hamlet . This is a major mode for editing
-;; Hamlet, which looks like HTML except using indentation to delimit blocks and
-;; with some special control-flow syntax, as well as shorthand for declaring
-;; element IDs and classes.
+;; hamlet-mode is an Emacs major mode for editing files written in Hamlet, a
+;; Haskell compile-time HTML templating engine. Currently it only provides
+;; syntax highlighting.
 
 (require 'cl-lib)
 
