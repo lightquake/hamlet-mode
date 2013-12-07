@@ -32,6 +32,9 @@
 ;; Haskell compile-time HTML templating engine. Currently it only provides
 ;; syntax highlighting.
 
+;; Functions and variables with // in their name are private and may change or
+;; go away at any time.
+
 ;;; Code:
 
 (require 'cl-lib)
@@ -75,7 +78,7 @@ displays the closed line as a message."
   (if (string-match-p "^\\s-*$" (s-trim-right (thing-at-point 'line)))
       (end-of-line)))
 
-(defun hamlet/previous-line-indentation ()
+(defun hamlet//previous-line-indentation ()
   "Get the indentation of the previous nonblank line, or 0 if
 there is no such line."
   (save-excursion
@@ -88,15 +91,16 @@ there is no such line."
 (defun hamlet/calculate-next-indentation ()
   "Calculate the next indentation level for the given line. The
 next indentation level is the next largest value
-in (hamlet/valid-indentations), or 0 if the line is maximally
-indented."
+in (hamlet//valid-indentations), or 0 if the line is maximally
+indented. This is not marked public so you can override it if you
+want."
   (let* ((indentation (current-indentation))
          (next-indentation (cl-find-if (lambda (x) (< x indentation))
-                                       (hamlet/valid-indentations))))
+                                       (hamlet//valid-indentations))))
     (if (numberp next-indentation) next-indentation
-      (+ (hamlet/previous-line-indentation) hamlet/basic-offset))))
+      (+ (hamlet//previous-line-indentation) hamlet/basic-offset))))
 
-(defun hamlet/valid-indentations ()
+(defun hamlet//valid-indentations ()
   "Calculate valid indentations for the current line, in
 decreasing order. Valid indentations are the next multiple of
 `hamlet/basic-offset' after the indentation of the previous
@@ -107,10 +111,10 @@ spaces, the valid indentations are 10, 8, 6, 4, 2, 0."
     ; Move point back to the previous non-blank line.
     (reverse (cl-loop for n
                       from 0 to (+ hamlet/basic-offset
-                                   (hamlet/previous-line-indentation))
+                                   (hamlet//previous-line-indentation))
                       by hamlet/basic-offset collect n))))
 
-(defconst hamlet/name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
+(defconst hamlet//name-regexp "[_:[:alpha:]][-_.:[:alnum:]]*")
 
 (defconst hamlet/font-lock-keywords
   `(
@@ -141,11 +145,11 @@ spaces, the valid indentations are 10, 8, 6, 4, 2, 0."
   "The hamlet mode syntax table.")
 
 
-(defalias 'hamlet/parent-mode
+(defalias 'hamlet//parent-mode
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
 
 ;;;###autoload
-(define-derived-mode hamlet-mode hamlet/parent-mode "Hamlet"
+(define-derived-mode hamlet-mode hamlet//parent-mode "Hamlet"
   "Major mode for editing Hamlet files."
   (kill-local-variable 'normal-auto-fill-function)
   (kill-local-variable 'font-lock-defaults)
