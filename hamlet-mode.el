@@ -132,12 +132,12 @@ no previous nonblank line, the only valid indentation is 0."
     ;; Doctype declaration.
     ("^!!!$" . font-lock-keyword-face)
     ;; Tag names.
-    (,(concat "</?\\(" hamlet/name-regexp "\\)") 1 font-lock-function-name-face)
+    (,(concat "</?\\(" hamlet//name-regexp "\\)") 1 font-lock-function-name-face)
 
     ;; Attributes can be either name=val, #id, or .class.
     (,(concat "\\(?:^\\|[ \t]\\)\\(?:\\("
-              hamlet/name-regexp "\\)=\\([^@^ \r\n]*\\)\\|\\([.#]"
-              hamlet/name-regexp "\\)\\)")
+              hamlet//name-regexp "\\)=\\([^@^ \r\n]*\\)\\|\\([.#]"
+              hamlet//name-regexp "\\)\\)")
      (1 font-lock-variable-name-face nil t) ; Attribute names
      (2 font-lock-string-face nil t) ; Attribute values
      (3 font-lock-variable-name-face nil t)) ; #id and .class
