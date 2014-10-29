@@ -136,7 +136,7 @@ no previous nonblank line, the only valid indentation is 0."
 
     ;; Attributes can be either name=val, #id, or .class.
     (,(concat "\\(?:^\\|[ \t]\\)\\(?:\\("
-              hamlet//name-regexp "\\)=\\([^@^ \r\n]*\\)\\|\\([.#]"
+              hamlet//name-regexp "\\)=\\([^@^ \r\n]*\\)\\|<?\\([.#]"
               hamlet//name-regexp "\\)\\)")
      (1 font-lock-variable-name-face nil t) ; Attribute names
      (2 font-lock-string-face nil t) ; Attribute values
