@@ -7,7 +7,7 @@ templating engine. Currently it only provides syntax highlighting.
 # Installation
 
 If you have Emacs >= 24, you can conveniently install `hamlet-mode` via the package
-in [MELPA](http://melpa.milkbox.net/).
+in [MELPA](https://melpa.org/).
 
 To install manually, simply put `hamlet-mode.el` wherever you want, load it, and `(require
 'hamlet-mode)`.
