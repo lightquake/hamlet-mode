@@ -1,6 +1,6 @@
 ;;; hamlet-mode.el --- Hamlet editing mode
 
-;; Author: Kata <lightquake@amateurtopologist.com
+;; Author: Kata <lightquake@amateurtopologist.com>
 ;; Keywords: wp, languages, comm
 ;; URL: https://github.com/lightquake/hamlet-mode
 ;; Version: 0.1
